@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarAuto - 智能车机系统</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span class="time" id="currentTime">00:00</span>
+                <span class="date" id="currentDate">2025-10-24</span>
+            </div>
+            <div class="status-center">
+                <div class="driver-status" id="driverStatus">
+                    <span class="status-icon">👤</span>
+                    <span class="status-text">正常驾驶</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <span class="weather" id="weather">25°C ☀️</span>
+                <span class="signal">📶</span>
+                <span class="battery">🔋 85%</span>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Left Sidebar Navigation -->
+            <div class="sidebar">
+                <div class="nav-item active" data-page="home">
+                    <div class="nav-icon">🏠</div>
+                    <div class="nav-label">主页</div>
+                </div>
+                <div class="nav-item" data-page="music">
+                    <div class="nav-icon">🎵</div>
+                    <div class="nav-label">音乐</div>
+                </div>
+                <div class="nav-item" data-page="navigation">
+                    <div class="nav-icon">🗺️</div>
+                    <div class="nav-label">导航</div>
+                </div>
+                <div class="nav-item" data-page="phone">
+                    <div class="nav-icon">📞</div>
+                    <div class="nav-label">电话</div>
+                </div>
+                <div class="nav-item" data-page="monitor">
+                    <div class="nav-icon">👁️</div>
+                    <div class="nav-label">监控</div>
+                </div>
+                <div class="nav-item" data-page="settings">
+                    <div class="nav-icon">⚙️</div>
+                    <div class="nav-label">设置</div>
+                </div>
+            </div>
+
+            <!-- Content Pages -->
+            <div class="content">
+                <!-- Home Page -->
+                <div class="page active" id="home-page">
+                    <h2 class="page-title">欢迎使用 CarAuto</h2>
+                    <div class="home-widgets">
+                        <div class="widget weather-widget">
+                            <h3>天气</h3>
+                            <div class="widget-content">
+                                <div class="weather-temp">25°C</div>
+                                <div class="weather-desc">晴天</div>
+                                <div class="weather-location">北京</div>
+                            </div>
+                        </div>
+                        <div class="widget music-widget">
+                            <h3>正在播放</h3>
+                            <div class="widget-content" id="homeNowPlaying">
+                                <div class="no-music">暂无播放</div>
+                            </div>
+                        </div>
+                        <div class="widget quick-actions">
+                            <h3>快捷操作</h3>
+                            <div class="widget-content">
+                                <button class="quick-btn" onclick="navigateTo('music')">🎵 音乐</button>
+                                <button class="quick-btn" onclick="navigateTo('navigation')">🗺️ 导航</button>
+                                <button class="quick-btn" onclick="navigateTo('phone')">📞 电话</button>
+                                <button class="quick-btn" onclick="toggleVoiceRecognition()">🎤 语音</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Music Page -->
+                <div class="page" id="music-page">
+                    <h2 class="page-title">音乐播放器</h2>
+                    
+                    <!-- Now Playing -->
+                    <div class="now-playing">
+                        <div class="album-art" id="albumArt">
+                            <div class="no-album">🎵</div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title" id="trackTitle">未播放</div>
+                            <div class="track-artist" id="trackArtist">-</div>
+                            <div class="track-album" id="trackAlbum">-</div>
+                        </div>
+                        <div class="playback-controls">
+                            <button class="control-btn" onclick="previousTrack()">⏮️</button>
+                            <button class="control-btn play-pause" id="playPauseBtn" onclick="togglePlayPause()">▶️</button>
+                            <button class="control-btn" onclick="nextTrack()">⏭️</button>
+                            <button class="control-btn" onclick="stopTrack()">⏹️</button>
+                        </div>
+                        <div class="progress-bar">
+                            <input type="range" class="progress-slider" id="progressSlider" min="0" max="100" value="0">
+                            <div class="time-info">
+                                <span id="currentTime">0:00</span>
+                                <span id="totalTime">0:00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Volume Control -->
+                    <div class="volume-control">
+                        <span>🔊</span>
+                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70" onchange="setVolume(this.value)">
+                        <span id="volumeValue">70</span>
+                    </div>
+
+                    <!-- Music Library -->
+                    <div class="music-library">
+                        <div class="library-header">
+                            <h3>音乐库</h3>
+                            <div class="library-actions">
+                                <input type="text" class="search-box" id="musicSearch" placeholder="搜索音乐..." onkeyup="searchMusic()">
+                                <button class="btn-secondary" onclick="scanLibrary()">🔄 扫描</button>
+                            </div>
+                        </div>
+                        <div class="track-list" id="trackList">
+                            <div class="empty-library">音乐库为空，请添加音乐文件到 data/music 目录</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Page -->
+                <div class="page" id="navigation-page">
+                    <h2 class="page-title">导航</h2>
+                    <div class="navigation-content">
+                        <div class="map-placeholder">
+                            <div class="map-icon">🗺️</div>
+                            <p>地图功能</p>
+                            <p class="feature-note">需要集成地图API (高德/百度地图)</p>
+                        </div>
+                        <div class="quick-destinations">
+                            <button class="destination-btn">🏠 回家</button>
+                            <button class="destination-btn">🏢 去公司</button>
+                            <button class="destination-btn">⛽ 加油站</button>
+                            <button class="destination-btn">🅿️ 停车场</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone Page -->
+                <div class="page" id="phone-page">
+                    <h2 class="page-title">电话</h2>
+                    <div class="phone-content">
+                        <div class="contacts-list">
+                            <h3>联系人</h3>
+                            <div class="contact-item">📞 张三 - 138****1234</div>
+                            <div class="contact-item">📞 李四 - 139****5678</div>
+                            <div class="contact-item">📞 王五 - 150****9012</div>
+                        </div>
+                        <div class="dial-pad">
+                            <h3>拨号盘</h3>
+                            <input type="tel" class="phone-input" placeholder="输入号码">
+                            <div class="dial-buttons">
+                                <button class="dial-btn">1</button>
+                                <button class="dial-btn">2</button>
+                                <button class="dial-btn">3</button>
+                                <button class="dial-btn">4</button>
+                                <button class="dial-btn">5</button>
+                                <button class="dial-btn">6</button>
+                                <button class="dial-btn">7</button>
+                                <button class="dial-btn">8</button>
+                                <button class="dial-btn">9</button>
+                                <button class="dial-btn">*</button>
+                                <button class="dial-btn">0</button>
+                                <button class="dial-btn">#</button>
+                            </div>
+                            <button class="call-btn">📞 呼叫</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Driver Monitor Page -->
+                <div class="page" id="monitor-page">
+                    <h2 class="page-title">驾驶员监控</h2>
+                    <div class="monitor-content">
+                        <div class="camera-view">
+                            <img id="cameraFeed" class="camera-feed" alt="Camera Feed">
+                            <div class="monitor-overlay">
+                                <div class="monitor-info" id="monitorInfo">
+                                    <div class="info-item">
+                                        <span class="info-label">人脸检测:</span>
+                                        <span class="info-value" id="faceDetected">未检测</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">头部姿态:</span>
+                                        <span class="info-value" id="headGesture">-</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">手势:</span>
+                                        <span class="info-value" id="handGesture">-</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">眼睛状态:</span>
+                                        <span class="info-value" id="eyeState">睁开</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">注意力:</span>
+                                        <span class="info-value" id="attentionScore">100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="monitor-controls">
+                            <button class="btn-primary" id="startMonitorBtn" onclick="toggleMonitoring()">启动监控</button>
+                            <div class="monitor-settings">
+                                <h3>监控设置</h3>
+                                <label>
+                                    <input type="checkbox" checked> 疲劳驾驶警告
+                                </label>
+                                <label>
+                                    <input type="checkbox" checked> 手势控制
+                                </label>
+                                <label>
+                                    <input type="checkbox"> 隐私模式
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div class="page" id="settings-page">
+                    <h2 class="page-title">设置</h2>
+                    <div class="settings-content">
+                        <div class="settings-category">
+                            <h3>显示设置</h3>
+                            <div class="setting-item">
+                                <label>主题</label>
+                                <select id="themeSetting" onchange="updateSetting('display', 'theme', this.value)">
+                                    <option value="dark">深色</option>
+                                    <option value="light">浅色</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>亮度</label>
+                                <input type="range" min="0" max="100" value="80" 
+                                       onchange="updateSetting('display', 'brightness', this.value)">
+                            </div>
+                        </div>
+
+                        <div class="settings-category">
+                            <h3>音频设置</h3>
+                            <div class="setting-item">
+                                <label>音量</label>
+                                <input type="range" min="0" max="100" value="70" id="settingsVolume"
+                                       onchange="updateSetting('audio', 'volume', this.value)">
+                            </div>
+                            <div class="setting-item">
+                                <label>均衡器预设</label>
+                                <select onchange="updateSetting('audio', 'equalizer_preset', this.value)">
+                                    <option value="normal">正常</option>
+                                    <option value="rock">摇滚</option>
+                                    <option value="pop">流行</option>
+                                    <option value="jazz">爵士</option>
+                                    <option value="classical">古典</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="settings-category">
+                            <h3>语音设置</h3>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="voiceEnabled" checked
+                                           onchange="updateSetting('voice', 'enabled', this.checked)">
+                                    启用语音识别
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>语言</label>
+                                <select onchange="updateSetting('voice', 'language', this.value)">
+                                    <option value="zh-CN">中文</option>
+                                    <option value="en-US">English</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="settings-category">
+                            <h3>系统设置</h3>
+                            <div class="setting-item">
+                                <label>系统语言</label>
+                                <select onchange="updateSetting('system', 'language', this.value)">
+                                    <option value="zh-CN">中文</option>
+                                    <option value="en-US">English</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>时间格式</label>
+                                <select onchange="updateSetting('system', 'time_format', this.value)">
+                                    <option value="24h">24小时制</option>
+                                    <option value="12h">12小时制</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="settings-actions">
+                            <button class="btn-primary" onclick="loadSettings()">刷新设置</button>
+                            <button class="btn-danger" onclick="resetSettings()">恢复默认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voice Recognition Indicator -->
+        <div class="voice-indicator" id="voiceIndicator">
+            <div class="voice-animation">🎤</div>
+            <div class="voice-text">正在聆听...</div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
