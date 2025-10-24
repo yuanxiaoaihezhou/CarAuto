@@ -5,10 +5,9 @@ echo "=== CarAuto Validation Script ==="
 echo
 
 echo "1. Checking Python syntax..."
-python3 -m py_compile backend/app/config.py backend/app/music_player.py \
+if python3 -m py_compile backend/app/config.py backend/app/music_player.py \
     backend/app/settings_manager.py backend/app/driver_monitor.py \
-    backend/app/voice_recognizer.py backend/app.py 2>&1
-if [ $? -eq 0 ]; then
+    backend/app/voice_recognizer.py backend/app.py; then
     echo "✓ All Python files syntax valid"
 else
     echo "✗ Python syntax errors found"
@@ -17,8 +16,7 @@ fi
 
 echo
 echo "2. Checking JavaScript syntax..."
-node -c frontend/static/js/app.js 2>&1
-if [ $? -eq 0 ]; then
+if node -c frontend/static/js/app.js; then
     echo "✓ JavaScript syntax valid"
 else
     echo "✗ JavaScript syntax errors found"
