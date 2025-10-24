@@ -1,0 +1,16 @@
+Flask==3.0.0
+Flask-CORS==4.0.0
+Flask-SocketIO==5.3.5
+python-socketio==5.10.0
+mediapipe==0.10.21
+opencv-python==4.9.0.80
+pillow==10.2.0
+mutagen==1.47.0
+SpeechRecognition==3.10.1
+pydub==0.25.1
+numpy==1.26.3
+requests==2.31.0
+python-dotenv==1.0.0
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0

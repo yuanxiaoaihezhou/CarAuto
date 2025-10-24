@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarAuto - Demo Screenshot</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #121212;
+            color: #FFFFFF;
+            overflow: hidden;
+        }
+        .demo-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 30px;
+            background: #1E1E1E;
+            border-bottom: 1px solid #333;
+        }
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+        .sidebar {
+            width: 120px;
+            background: #1E1E1E;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+        .nav-item.active {
+            background: #2C2C2C;
+            border-left-color: #2196F3;
+        }
+        .nav-icon { font-size: 32px; margin-bottom: 8px; }
+        .nav-label { font-size: 12px; color: #B0B0B0; }
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+        .page-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+        .widgets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .widget {
+            background: #1E1E1E;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #333;
+        }
+        .widget h3 {
+            color: #B0B0B0;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .weather-temp { font-size: 48px; font-weight: 300; }
+        .quick-btn {
+            padding: 15px;
+            background: #2196F3;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .status-badge {
+            background: #4CAF50;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="status-bar">
+            <div>
+                <span style="font-size: 20px; font-weight: 600;">10:23</span>
+                <span style="color: #B0B0B0; margin-left: 15px;">2025-10-24</span>
+            </div>
+            <div class="status-badge">
+                <span>👤</span> 正常驾驶
+            </div>
+            <div>
+                <span>25°C ☀️</span>
+                <span style="margin-left: 15px;">📶</span>
+                <span style="margin-left: 15px;">🔋 85%</span>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="nav-item active">
+                    <div class="nav-icon">🏠</div>
+                    <div class="nav-label">主页</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">🎵</div>
+                    <div class="nav-label">音乐</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">🗺️</div>
+                    <div class="nav-label">导航</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">📞</div>
+                    <div class="nav-label">电话</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">👁️</div>
+                    <div class="nav-label">监控</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">⚙️</div>
+                    <div class="nav-label">设置</div>
+                </div>
+            </div>
+            <div class="content">
+                <h2 class="page-title">欢迎使用 CarAuto</h2>
+                <div class="widgets">
+                    <div class="widget">
+                        <h3>天气</h3>
+                        <div class="weather-temp">25°C</div>
+                        <div style="font-size: 20px; margin-top: 10px;">晴天</div>
+                        <div style="color: #B0B0B0; margin-top: 5px;">北京</div>
+                    </div>
+                    <div class="widget">
+                        <h3>正在播放</h3>
+                        <div style="font-size: 18px; margin-top: 20px;">暂无播放</div>
+                    </div>
+                    <div class="widget">
+                        <h3>快捷操作</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                            <button class="quick-btn">🎵 音乐</button>
+                            <button class="quick-btn">🗺️ 导航</button>
+                            <button class="quick-btn">📞 电话</button>
+                            <button class="quick-btn">🎤 语音</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 40px; text-align: center; color: #B0B0B0; font-size: 16px;">
+                    <p>CarAuto - 现代智能车机系统</p>
+                    <p style="margin-top: 10px;">支持音乐播放、驾驶员监控、语音识别等功能</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
